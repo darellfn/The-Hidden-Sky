@@ -8,6 +8,5 @@ class Ground():
         self.ground = pygame.transform.scale(self.ground, (1400, height))
         self.ground_pos = (0, 650)
 
-
     def get_ground(self, screen):
         screen.blit(self.ground, self.ground_pos)
