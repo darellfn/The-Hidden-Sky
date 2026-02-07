@@ -10,3 +10,7 @@ class Ground():
 
     def get_ground(self, screen):
         screen.blit(self.ground, self.ground_pos)
+
+    def get_ground_pos(self):
+        x, y = self.ground_pos
+        return y

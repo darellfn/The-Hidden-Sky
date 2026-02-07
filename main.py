@@ -25,6 +25,7 @@ while True:
 
     keys = pygame.key.get_pressed()
     player.movement(keys)
+    player.jump(keys)
 
     background.get_background(screen)
     ground.get_ground(screen)
