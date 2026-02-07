@@ -3,7 +3,7 @@ import pygame
 class Background():
     def __init__(self):
         super().__init__()
-        self.background = pygame.image.load("test_graphics/sky.png").convert_alpha()
+        self.background = pygame.image.load("graphics/backgrounds/background_1.png").convert_alpha()
         self.background_pos = (0, 0)
 
     def get_background(self, screen):
