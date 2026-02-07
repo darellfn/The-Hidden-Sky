@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
         self.left = False
 
         # Gravitet
-        self.gravity = 0.6
+        self.gravity = 0.7
         self.velocity = 0
-        self.jump_strength = -18
+        self.jump_strength = -20
         self.on_ground = True
 
         # Gå til venstre
@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
     def movement(self, keys):
         # Venstre
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.player_rect.x -= 4
+            self.player_rect.x -= 8
 
             self.player_walking_left_index += 0.1
             if self.player_walking_left_index >= len(self.walking_left): 
@@ -59,7 +59,7 @@ class Player(pygame.sprite.Sprite):
 
         # Høyre
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.player_rect.x += 4
+            self.player_rect.x += 8
 
             self.player_walking_right_index += 0.1
             if self.player_walking_right_index >= len(self.walking_right): 
@@ -87,7 +87,7 @@ class Player(pygame.sprite.Sprite):
     def change_y(self, platform_rect):
         if self.velocity >= 0:
             if self.player_rect.colliderect(platform_rect):
-                if self.player_rect.bottom <= platform_rect.top:
+                if self.player_rect.bottom <= platform_rect.bottom:
                     self.player_rect.bottom = platform_rect.top
                     self.velocity = 0
                     self.on_ground = True 

@@ -10,6 +10,7 @@ from levels.level_1 import Level_1
 pygame.init()
 screen = pygame.display.set_mode((1400, 850))
 pygame.display.set_caption("The Hidden Sky")
+clock = pygame.time.Clock()
 
 # Levels
 
@@ -27,8 +28,9 @@ while True:
             pygame.quit()
             exit()
 
-    if level_1:
+    if level_1_unlocked:
         level_1.start()
         
-
     pygame.display.update()
+
+    clock.tick(60)

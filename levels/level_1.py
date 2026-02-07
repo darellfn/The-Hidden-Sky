@@ -35,7 +35,7 @@ class Level_1:
 
         # Beanstalk
 
-        self.beanstalk = Item(800, self.ground_pos_y, 850, 600, "graphics/items/beanstalk.png")
+        #self.beanstalk = Item(800, self.ground_pos_y, 850, 600, "graphics/items/beanstalk.png")
 
     def start(self):
         keys = pygame.key.get_pressed()
