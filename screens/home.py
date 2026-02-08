@@ -26,8 +26,8 @@ class Home:
     def start(self):
         lines = [
             "A or < : Move Left",
-            "D or > : Move Right",
-            "W or ^"
+            "D or > : Moves Right",
+            "W or ARROW UP : Climb",
             "SPACE : Jump",
             "E : Pick up potion",
             "R : Drop potion on flower pot",
