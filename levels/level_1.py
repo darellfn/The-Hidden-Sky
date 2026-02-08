@@ -5,10 +5,14 @@ from characters.player import Player
 from components.platform import Platform
 from characters.evil_scientist import Evil_Scientist
 from components.item import Item
+from components.pot import Pot
+from components.beanstalk import Beanstalk
 
 class Level_1:
     def __init__(self, screen):
         super().__init__
+
+        self.completed = False
 
         # Background and ground
         self.screen = screen
@@ -30,12 +34,16 @@ class Level_1:
         self.evil_scientist = Evil_Scientist(self.ground_pos_y)
 
         # Pot
-
-        self.pot = Item(800, self.ground_pos_y, 80, 80, "graphics/items/pot.png")
+        self.pot = Pot(800, self.ground_pos_y, 80, 80, "graphics/items/pot.png")
 
         # Beanstalk
+        self.beanstalk = Beanstalk(800, self.ground_pos_y, 850, 600, "graphics/items/beanstalk.png")
 
-        #self.beanstalk = Item(800, self.ground_pos_y, 850, 600, "graphics/items/beanstalk.png")
+        # Potion
+        self.potion = Item(50, self.platform_1.get_top_point(), 40, 40, "graphics/items/potion.png")
+
+        # Exit
+        self.exit = Item(1250, 150, 100, 100, "graphics/items/exit.png")
 
     def start(self):
         keys = pygame.key.get_pressed()
@@ -46,11 +54,31 @@ class Level_1:
         self.platform_1.draw_platform(self.screen)
         self.platform_2.draw_platform(self.screen)
         self.pot.draw_item(self.screen)
-        #self.beanstalk.draw_item(self.screen)
+        self.potion.draw_item(self.screen)
+        self.beanstalk_grow()
+        self.potion.draw_item(self.screen)
+        self.exit.draw_item(self.screen)
         self.player.get_player(self.screen)
         self.player.change_y(self.platform_1_y)
         self.player.change_y(self.platform_2_y)
+        self.player.add_item_to_inventory(keys, self.potion.get_rect(), self.potion)
+        self.player.drop_item(self.potion, keys, self.beanstalk.get_beanstalk_rect())
+        self.player.climb_beanstalk(keys, self.beanstalk, self.beanstalk.get_beanstalk_rect())
+        self.finish_level()
 
+    def beanstalk_grow(self):
+        if self.pot.get_rect().colliderect(self.potion.get_rect()) and not self.potion.is_stored():
+            self.beanstalk.draw_beanstalk(self.screen)
+            self.beanstalk.grow_beanstalk()
+        else:
+            self.beanstalk.ungrow_beanstalk()
+
+    def finish_level(self):
+        if self.player.get_player_rect().colliderect(self.exit.get_rect()):
+            self.completed = True
+    
+    def is_finished(self):
+        return self.completed
     
 
 
