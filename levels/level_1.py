@@ -47,17 +47,19 @@ class Level_1:
 
     def start(self):
         keys = pygame.key.get_pressed()
-        self.player.movement(keys)
+        self.player.movement(keys, [])
         self.player.jump(keys)
         self.background.get_background(self.screen)
         self.ground.get_ground(self.screen)
         self.platform_1.draw_platform(self.screen)
         self.platform_2.draw_platform(self.screen)
+        
         self.pot.draw_item(self.screen)
         self.potion.draw_item(self.screen)
         self.beanstalk_grow()
         self.potion.draw_item(self.screen)
         self.exit.draw_item(self.screen)
+        
         self.player.get_player(self.screen)
         self.player.change_y(self.platform_1_y)
         self.player.change_y(self.platform_2_y)

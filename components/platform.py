@@ -19,3 +19,12 @@ class Platform:
     
     def get_top_point(self):
         return self.platform_rect.top
+    
+    def get_x_point(self):
+        return self.platform_rect.x
+    
+    def get_right_point(self):
+        return self.platform_rect.right
+    
+    def get_left_point(self):
+        return self.platform_rect.left

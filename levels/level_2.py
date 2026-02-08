@@ -40,6 +40,15 @@ class Level_2:
         self.wall_2 = Wall(950, self.wall_1.get_top_point())
         self.wall_3 = Wall(950, self.wall_2.get_top_point())
 
+        self.walls = [
+            self.wall_1.get_wall(),
+            self.wall_2.get_wall(),
+            self.wall_3.get_wall(),
+        ]
+
+        self.platform_5 = Platform(self.wall_2.get_wall().x, self.wall_2.get_wall().y)
+        self.platform_5_y = self.platform_5.get_platform()
+
         # Player
         self.player = Player(self.ground_pos_y)
 
@@ -56,11 +65,11 @@ class Level_2:
         self.potion = Item(850, self.platform_4.get_top_point(), 40, 40, "graphics/items/potion.png")
 
         # Exit
-        self.exit = Item(1300, 200, 50, 50, "graphics/items/exit.png")
+        self.exit = Item(1250, 100, 100, 100, "graphics/items/exit_up.png")
 
     def start(self):
         keys = pygame.key.get_pressed()
-        self.player.movement(keys)
+        self.player.movement(keys, self.walls)
         self.player.jump(keys)
         self.background.get_background(self.screen)
         self.ground.get_ground(self.screen)
@@ -68,25 +77,33 @@ class Level_2:
         self.platform_2.draw_platform(self.screen)
         self.platform_3.draw_platform(self.screen)
         self.platform_4.draw_platform(self.screen)
+        self.platform_5.draw_platform(self.screen)
         self.wall_1.draw_wall(self.screen)
         self.wall_2.draw_wall(self.screen)
         self.wall_3.draw_wall(self.screen)
 
+        self.exit.draw_item(self.screen)
         self.pot.draw_item(self.screen)
         self.potion.draw_item(self.screen)
         self.beanstalk_grow()
         self.potion.draw_item(self.screen)
-        self.exit.draw_item(self.screen)
+        
         self.enemy.spawn(self.screen)
+        self.enemy.walk(self.platform_3.get_x_point(), self.wall_1.get_left_point() - 100)
         self.player.get_player(self.screen)
         self.player.change_y(self.platform_1_y)
         self.player.change_y(self.platform_2_y)
         self.player.change_y(self.platform_3_y)
         self.player.change_y(self.platform_4_y)
+        self.player.change_y(self.platform_5_y)
+
         self.player.add_item_to_inventory(keys, self.potion.get_rect(), self.potion)
         self.player.drop_item(self.potion, keys, self.beanstalk.get_beanstalk_rect())
         self.player.climb_beanstalk(keys, self.beanstalk, self.beanstalk.get_beanstalk_rect())
         self.finish_level()
+
+    def is_detected(self):
+        return self.enemy.can_see_player(self.player.get_player_rect())
 
     def beanstalk_grow(self):
         if self.pot.get_rect().colliderect(self.potion.get_rect()) and not self.potion.is_stored():
@@ -97,7 +114,7 @@ class Level_2:
 
     def finish_level(self):
         if self.player.get_player_rect().colliderect(self.exit.get_rect()):
-            self.is_finished()
+            self.completed = True
     
     def is_finished(self):
         return self.completed

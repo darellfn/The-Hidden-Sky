@@ -14,6 +14,9 @@ class Player(pygame.sprite.Sprite):
         self.right = True
         self.left = False
 
+        # Wall collision
+        self.collided_wall = False
+
         # Gravitet
         self.gravity = 0.7
         self.velocity = 0
@@ -73,33 +76,54 @@ class Player(pygame.sprite.Sprite):
     def get_player_rect(self):
         return self.player_rect
     
-    def movement(self, keys):
-        # Venstre
-        if self.player_rect.x >= 0:
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+    def movement(self, keys, walls):
+
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+
+            blocked_left = any(
+                self.player_rect.left <= wall.right and
+                self.player_rect.right > wall.right and
+                self.player_rect.colliderect(wall)
+                for wall in walls
+            )
+
+            if self.player_rect.x >= 0 and not blocked_left:
                 self.player_rect.x -= 8
 
                 self.player_walking_left_index += 0.1
-                if self.player_walking_left_index >= len(self.walking_left): 
+                if self.player_walking_left_index >= len(self.walking_left):
                     self.player_walking_left_index = 0
+
                 self.player_image = self.walking_left[int(self.player_walking_left_index)]
                 self.player_image = pygame.transform.scale(self.player_image, self.player_size)
 
-        # Høyre
-        if self.player_rect.x <= 1325:
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+
+            blocked_right = any(
+                self.player_rect.right >= wall.left and
+                self.player_rect.left < wall.left and
+                self.player_rect.colliderect(wall)
+                for wall in walls
+            )
+
+            if self.player_rect.x <= 1325 and not blocked_right:
                 self.player_rect.x += 8
 
                 self.player_walking_right_index += 0.1
-                if self.player_walking_right_index >= len(self.walking_right): 
+                if self.player_walking_right_index >= len(self.walking_right):
                     self.player_walking_right_index = 0
+
                 self.player_image = self.walking_right[int(self.player_walking_right_index)]
                 self.player_image = pygame.transform.scale(self.player_image, self.player_size)
 
         else:
             if not self.is_climbing:
-                self.player_image = pygame.image.load("graphics/characters/rio/rio.png").convert_alpha()
-                self.player_image = pygame.transform.scale(self.player_image, self.player_size)
+                self.player_image = pygame.image.load(
+                    "graphics/characters/rio/rio.png"
+                ).convert_alpha()
+                self.player_image = pygame.transform.scale(
+                    self.player_image, self.player_size
+                )
 
     def jump(self, keys):
         if keys[pygame.K_SPACE] and self.on_ground:
@@ -115,16 +139,32 @@ class Player(pygame.sprite.Sprite):
             self.on_ground = True
 
     def change_y(self, platform_rect):
-        if self.velocity >= 0:
-            if self.player_rect.colliderect(platform_rect):
-                if self.player_rect.bottom <= platform_rect.bottom:
-                    self.player_rect.bottom = platform_rect.top
-                    self.velocity = 0
-                    self.on_ground = True
+        if self.player_rect.colliderect(platform_rect):
+
+            if self.velocity > 0 and self.player_rect.bottom <= platform_rect.bottom:
+                self.player_rect.bottom = platform_rect.top
+                self.velocity = 0
+                self.on_ground = True
+
+            elif self.velocity < 0 and self.player_rect.top >= platform_rect.top:
+                self.player_rect.top = platform_rect.bottom
+                self.velocity = 0
+
+    def collision_points(self, walls):
+        for wall in walls:
+            if self.player_rect.colliderect(wall):
+                self.collided_wall = True
+                return
+
+        self.collided_wall = False
+        return
+        
+    def collided_with_wall(self):
+        return self.collided_wall
 
     def climb_beanstalk(self, keys, beanstalk, beanstalk_rect):
         if self.player_rect.colliderect(beanstalk_rect) and beanstalk.get_is_grown():
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_UP] or keys[pygame.K_w]:
                 self.is_climbing = True
                 self.player_climbing_index += 0.1
                 if self.player_climbing_index >= len(self.climbing):
@@ -152,10 +192,3 @@ class Player(pygame.sprite.Sprite):
                 if keys[pygame.K_r]:
                     item.unstore_from_inventory(self.get_pos_x(), self.get_pos_y())
                     self.inventory.pop()
-
-
-
-
-        
-
-

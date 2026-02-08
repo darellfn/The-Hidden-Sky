@@ -33,6 +33,3 @@ class Item:
 
     def is_stored(self):
         return self.stored
-
-
-
