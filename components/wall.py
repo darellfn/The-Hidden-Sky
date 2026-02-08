@@ -2,7 +2,7 @@ import pygame
 
 class Wall:
     def __init__(self, x, y):
-        super().__init__
+        super().__init__()
         self.x = x
         self.y = y
         
@@ -21,3 +21,6 @@ class Wall:
     
     def get_left_point(self):
         return self.wall_rect.left
+    
+    def get_right_point(self):
+        return self.wall_rect.right
